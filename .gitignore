@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+data/*.sqlite3
+data/exe-test/
+data/exe-smoke*/
+*.log
+.DS_Store
+Thumbs.db
+build/
+dist/
+*.spec
