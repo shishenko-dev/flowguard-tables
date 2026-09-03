@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="FlowGuard Таблицы находит повторы, ошибки, необычные суммы и спорные комментарии в Excel и CSV. Данные остаются на компьютере." />
+    <title>FlowGuard Таблицы — порядок в Excel без облака</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <header class="topbar shell">
+      <a class="brand" href="#top" aria-label="FlowGuard Таблицы">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>FlowGuard</strong><small>Таблицы</small></span>
+      </a>
+      <div class="system-state"><i></i> Работает на вашем компьютере</div>
+    </header>
+
+    <main id="top" class="shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Проверка таблиц без передачи данных в облако</p>
+          <h1>Загрузите Excel и получите готовый список ошибок.</h1>
+          <p class="hero-text">
+            Программа находит повторные заявки, пропущенные контакты, неверные даты,
+            необычные суммы и противоречия между статусом и комментарием. Результат
+            можно проверить на экране и скачать в новом Excel-файле.
+          </p>
+          <div class="hero-actions">
+            <button id="demoButton" class="button button-primary" type="button"><span>Запустить пример</span><kbd>↵</kbd></button>
+            <label class="button button-secondary" for="fileInput">Проверить свою таблицу</label>
+            <input id="fileInput" type="file" accept=".xlsx,.csv,.json,text/csv,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden />
+          </div>
+          <p id="uploadHint" class="upload-hint">
+            Поддерживаются Excel (.xlsx), CSV и JSON до 15 МБ. Названия столбцов
+            «Клиент», «Телефон», «Почта», «Сумма», «Статус» и «Комментарий» распознаются автоматически.
+          </p>
+        </div>
+
+        <aside class="hero-panel" aria-label="Как работает проверка">
+          <div class="panel-glow"></div>
+          <div class="panel-head"><span>Что происходит с таблицей</span><b>4 шага</b></div>
+          <ol class="pipeline">
+            <li><em>01</em><span><strong>Приведение к единому виду</strong><small>телефоны, почта и даты</small></span></li>
+            <li><em>02</em><span><strong>Поиск повторов</strong><small>один клиент в нескольких строках</small></span></li>
+            <li><em>03</em><span><strong>Поиск несоответствий</strong><small>суммы, статусы и комментарии</small></span></li>
+            <li><em>04</em><span><strong>Очередь исправлений</strong><small>сначала самое важное</small></span></li>
+          </ol>
+          <div class="privacy-line"><span>Передано во внешние службы</span><strong>0</strong></div>
+        </aside>
+      </section>
+
+      <section id="workspace" class="workspace" hidden>
+        <div class="section-heading">
+          <div><p class="eyebrow">Последняя проверка</p><h2>Результат анализа</h2></div>
+          <div class="section-actions">
+            <a class="button button-quiet" href="/api/report/latest.xlsx">Скачать Excel</a>
+            <a class="button button-quiet" href="/api/report/latest.csv">Скачать CSV</a>
+            <button id="rerunButton" class="button button-secondary" type="button">Проверить ещё раз</button>
+          </div>
+        </div>
+
+        <div class="metrics" aria-label="Краткая сводка">
+          <article class="metric metric-total"><span>Всего строк</span><strong id="metricTotal">0</strong><small>успешно обработано</small></article>
+          <article class="metric metric-attention"><span>Требуют внимания</span><strong id="metricAttention">0</strong><small>лучше проверить сегодня</small></article>
+          <article class="metric metric-duplicate"><span>Группы повторов</span><strong id="metricDuplicates">0</strong><small>совпавшие контакты</small></article>
+          <article class="metric metric-anomaly"><span>Необычные суммы</span><strong id="metricAnomalies">0</strong><small>отклонения от большинства</small></article>
+          <article class="metric metric-time"><span>Время проверки</span><strong id="metricTime">0</strong><small>миллисекунд</small></article>
+        </div>
+
+        <div class="control-row">
+          <div class="filters" role="group" aria-label="Фильтры строк">
+            <button class="filter active" data-filter="all" type="button">Все</button>
+            <button class="filter" data-filter="attention" type="button">Нужно проверить</button>
+            <button class="filter" data-filter="duplicate" type="button">Повторы</button>
+            <button class="filter" data-filter="anomaly" type="button">Суммы</button>
+          </div>
+          <div id="resultMeta" class="result-meta"></div>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="card queue-card">
+            <div class="card-head"><div><span class="card-kicker">По важности</span><h3>Что нужно исправить</h3></div><span id="visibleCount" class="count-badge">0</span></div>
+            <div id="actionQueue" class="action-queue"></div>
+          </section>
+
+          <aside class="side-stack">
+            <section class="card model-card">
+              <div class="card-head"><div><span class="card-kicker">Проверяемая логика</span><h3>Проверка комментариев</h3></div><span class="live-dot">готово</span></div>
+              <div class="model-score"><strong id="modelAccuracy">—</strong><span>точность на контрольных примерах</span></div>
+              <dl id="modelDetails" class="model-details"></dl>
+            </section>
+            <section class="card distribution-card">
+              <div class="card-head"><div><span class="card-kicker">Содержание комментариев</span><h3>Темы обращений</h3></div></div>
+              <div id="intentBars" class="intent-bars"></div>
+            </section>
+          </aside>
+        </div>
+
+        <section class="card records-card">
+          <div class="card-head"><div><span class="card-kicker">Подробности</span><h3>Все проверенные строки</h3></div><span class="privacy-badge">только на этом компьютере</span></div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Риск</th><th>Запись</th><th>Услуга</th><th>Статус</th><th>Смысл комментария</th><th>Действие</th></tr></thead>
+              <tbody id="recordsTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <footer class="shell footer"><span>FlowGuard Таблицы · разработка Ильи Шишенко</span><span>Python · SQLite · локальная обработка · понятные причины</span></footer>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
